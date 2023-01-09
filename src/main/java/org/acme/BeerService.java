@@ -1,5 +1,6 @@
 package org.acme;
 
+import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import javax.ws.rs.GET;
@@ -15,5 +16,5 @@ public interface BeerService {
     @GET
     @Path("/beers/random")
     @Produces(MediaType.APPLICATION_JSON)
-    List<BeerDto> getRandomBeer();
+    Uni<List<BeerDto>> getRandomBeer();
 }
