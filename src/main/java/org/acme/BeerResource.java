@@ -1,6 +1,5 @@
 package org.acme;
 
-import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -20,13 +19,12 @@ public class BeerResource {
     BeerDao beerDao;
 
     @GET
-    @Blocking
     @Produces(MediaType.APPLICATION_JSON)
     public Uni<Beer> getRandomBeer() {
         return beerService.getRandomBeer().map(beerDtos -> {
                     final BeerDto beerDto = beerDtos.stream().findFirst().orElseThrow();
                     return Beer.of(beerDto.getName(), beerDto.getTagline(), beerDto.getAbv());
                 })
-                .map(beer -> beerDao.createBeer(beer));
+                .flatMap(beer -> beerDao.createBeer(beer));
     }
 }

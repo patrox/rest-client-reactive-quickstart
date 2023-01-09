@@ -1,18 +1,19 @@
 package org.acme;
 
+import io.smallrye.mutiny.Uni;
+import org.hibernate.reactive.mutiny.Mutiny;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.transaction.Transactional;
 
 @ApplicationScoped
 public class BeerDao {
     @Inject
-    EntityManager em;
+    Mutiny.SessionFactory sf;
 
-    @Transactional
-    public Beer createBeer(Beer beer) {
-        em.persist(beer);
-        return beer;
+    public Uni<Beer> createBeer(Beer beer) {
+        return sf.withTransaction(session ->
+                session.persist(beer)
+                        .replaceWith(beer));
     }
 }
